@@ -4,13 +4,17 @@
 #include "ofxSharedMemory.h"
 #include "ofxUI.h"
 
+#define SOUND_DEVICE_ID 0
+
+
 
 class ofApp : public ofBaseApp
 {
-    ofxSharedMemory<SharedDataStruct *> mSharedMem;
+    SharedData * mSharedData;
+    ofxSharedMemory<SharedData *> mSharedMem;
     bool bConnected;
     
-    ofxUISuperCanvas * gui;
+    ofxUISuperCanvas * gui1;
     
     ofSoundStream soundStream;
     float mWaveL[WAVE_SIZE];
@@ -29,9 +33,15 @@ public:
         //----------
         // setup shared memory
         //----------
-        SharedData.level = 0;
-        for (int i = 0; i < WAVE_SIZE; ++i) SharedData.wave[i] = 0;
-        SharedData.mode = 0;
+        mSharedData = new SharedData();
+        mSharedData->level = 0;
+        for (int i = 0; i < WAVE_SIZE; ++i) mSharedData->wave[i] = 0;
+        mSharedData->mode = 0;
+        mSharedData->bang_switch = false;
+        for (int i = 0; i < NUM_VFXWIN; ++i)
+            for (int j = 0; j < NUM_TOGGLE; ++j)
+                mSharedData->toggles[i][j] = false;
+        
         mSharedMem.setup(SHARED_DATA_KEY, sizeof(SharedData), true);
         bConnected = mSharedMem.connect();
         
@@ -39,28 +49,32 @@ public:
         // setup sound stream
         //----------
         soundStream.listDevices();
+        soundStream.setDeviceID(SOUND_DEVICE_ID);
         mSmoothedVol = 0;
         mSmoothBalance = 0.93;
         mGain = 1.0;
         mBangTh = 0.6;
+        mBang = false;
         soundStream.setup(this, 0, 2, 44100, WAVE_SIZE, 4);
         
         //----------
         // setup gui
         //----------
-        gui = new ofxUISuperCanvas("PARAMETERS");
-        gui->setColorBack(ofColor(0));
-        gui->addFPSSlider("FPS");
-        gui->addSlider("LEVEL(SMOOTHED)", 0, 1, &mSmoothedVol);
-        gui->addSlider("BANG_THRESHOLD", 0, 1, &mBangTh);
-        gui->addButton("BANG", &mBang);
-        gui->addSlider("SMOOTH_BALANCE", 0, 1, &mSmoothBalance);
-        gui->addSlider("GAIN", 0, 50, &mGain);
-        gui->addWaveform("CH.01(L)", mWaveL, WAVE_SIZE, -1, 1);
-        gui->addWaveform("CH.02(R)", mWaveR, WAVE_SIZE, -1, 1);
-        gui->autoSizeToFitWidgets();
-        gui->loadSettings("parameters.xml");
+        gui1 = new ofxUISuperCanvas("PARAMETERS");
+        gui1->addFPSSlider("FPS");
+        gui1->addSlider("LEVEL(SMOOTHED)", 0, 1, &mSmoothedVol);
+        gui1->addSlider("BANG_THRESHOLD", 0, 1, &mBangTh);
+        gui1->addButton("BANG", &mBang);
+        gui1->addSlider("SMOOTH_BALANCE", 0, 1, &mSmoothBalance);
+        gui1->addSlider("GAIN", 0, 50, &mGain);
+        gui1->addWaveform("CH.01(L)", mWaveL, WAVE_SIZE, -1, 1);
+        gui1->addWaveform("CH.02(R)", mWaveR, WAVE_SIZE, -1, 1);
+        gui1->addLabel("TOGGLES");
+        gui1->addToggleMatrix("TOGGLE_MATRIX", NUM_VFXWIN, NUM_TOGGLE);
+        gui1->autoSizeToFitWidgets();
+        gui1->loadSettings("gui1.xml");
         
+        ofAddListener(gui1->newGUIEvent, this, &ofApp::guiEvent);
     }
     
     void update()
@@ -72,33 +86,57 @@ public:
         {
             if (ofGetFrameNum() % 300 == 0) bConnected = mSharedMem.connect();
         }
-        
-        // bang
-        if (mSmoothedVol > mBangTh)
-        {
-            mBang = true;
+        else {
+            //----------
+            // update data
+            //----------
+            mSharedData->level = mSmoothedVol;
+            memcpy(mSharedData->wave, mWaveL, sizeof(mWaveL));
+            mSharedData->mode = 0;
+
+            if (mSmoothedVol > mBangTh)
+            {
+                if (!mBang)
+                {
+                    sendBang();
+                    mBang = true;
+                }
+            }
+            else mBang = false;
+            mSharedMem.setData(mSharedData);
         }
-        
-        // update data
-        
     }
     
     void draw()
     {
-        ofBackground(0, 0, 0);
+        ofBackground(80);
         
     }
     
     void sendBang()
     {
-        
+        mSharedData->bang_switch != mSharedData->bang_switch;
     }
     
     void exit()
     {
         mSharedMem.close();
-        gui->saveSettings("parameters.xml");
-        delete gui;
+        gui1->saveSettings("gui1.xml");
+        delete mSharedData;
+        delete gui1;
+    }
+    
+    void guiEvent(ofxUIEventArgs &e)
+    {
+        string name = e.widget->getName();
+        int kind = e.widget->getKind();
+        if (kind == 2)
+        {
+            ofxUIToggle * w = (ofxUIToggle *) e.widget;
+            int vid = ofToInt(name.substr(name.size() - 2, 1));
+            int tgl = ofToInt(name.substr(name.size() - 4, 1));
+            mSharedData->toggles[vid][tgl] = w->getValue();
+        }
     }
     
     void audioIn(float * input, int bufferSize, int nChannels)
