@@ -9,19 +9,11 @@
 
 class ofApp : public ofBaseApp
 {
-    ofxOscReceiver mReceiver;
+    int mID;
     itg::ofxStateMachine<> * mVfx;
-    
-    
-    float getAsFloat(ofxOscMessage & m, const int index)
-    {
-        switch(m.getArgType(index))
-        {
-            case OFXOSC_TYPE_FLOAT: return m.getArgAsFloat(index);
-            case OFXOSC_TYPE_INT32: return (float)m.getArgAsInt32(index);
-            default: return 0;
-        }
-    }
+    SharedData * mSharedData;
+    ofxSharedMemory<SharedData *> mSharedMem;
+    bool bConnected;
     
 public:
     ofApp(int argc, char** argv)
@@ -29,12 +21,15 @@ public:
         if (argc != 3)
         {
             string arg(argv[1]);
-            ofLogNotice() << "listen port: " << arg;
-            mReceiver.setup(ofToInt(arg));
+            mID = ofToInt(arg);
+            ofLogNotice() << "ID: " << arg;
+            
+            mSharedMem.setup(SHARED_DATA_KEY, sizeof(SharedData), false);
+            bConnected = mSharedMem.connect();
+            mSharedData = 0;
             
             LEVEL = 0;
-            WAVE.resize(WAVE_SIZE, 0);
-            for (int i = 0; i < TOGGLE.size(); ++i) TOGGLE[i] = false;
+            for (int i = 0; i < NUM_TOGGLE; ++i) TOGGLE[i] = false;
             
             mVfx = new itg::ofxStateMachine<>();
             mVfx->addState(new GeometWave);
@@ -49,22 +44,25 @@ public:
     
     void update()
     {
-        if (mReceiver.hasWaitingMessages())
+        if (!bConnected)
         {
-            ofxOscMessage m;
-            mReceiver.getNextMessage(&m);
-            if (m.getAddress() == "/level") setLevel(getAsFloat(m, 0));
-            if (m.getAddress() == "/bang") sendBang();
-            if (m.getAddress() == "/exit") exit();
+            if (ofGetFrameNum() % 300 == 0) bConnected = mSharedMem.connect();
         }
-        
-        // dummy wave
-        for (int i = 0; i < WAVE.size(); ++i)
-        {
-            WAVE[i] = ofRandomf();
+        else {
+            mSharedData = mSharedMem.getData();
+            setLevel(mSharedData->level);
+            memcpy(WAVE, mSharedData->wave, sizeof(mSharedData->wave));
         }
         
         mVfx->update();
+        
+        stringstream s;
+        s << "VFX ID: " << mID << " | METER: ";
+        for (int i = 0; i < 30; ++i)
+        {
+            ((float)i / 30) <= LEVEL ? (s << "#") : (s << "-");
+        }
+        ofSetWindowTitle(s.str());
     }
     
     void draw()

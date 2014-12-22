@@ -1,4 +1,5 @@
 #pragma once
+#include "../../SharedData.h"
 #include "ofxState.h"
 
 #define DEFAULT_WINDOW_W 320
@@ -32,8 +33,9 @@ return "";\
 namespace common
 {
     static float level;
-    static vector<float> wave;
-    static bitset<5> toggle;
+    static float wave[WAVE_SIZE];
+    static bool  toggle[NUM_TOGGLE];
+    static bool  bang_switch;
 }
 
 

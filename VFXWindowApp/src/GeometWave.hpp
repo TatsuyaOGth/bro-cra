@@ -19,7 +19,7 @@ public:
     GeometWave()
     {
         mode = 0;
-        for (int i = 0; i < WAVE.size(); i++) {
+        for (int i = 0; i < WAVE_SIZE; i++) {
             mArcs.push_back(shared_ptr<RotationArc>(new RotationArc(300, 600, ofRandom(30, 180), 0, ofRandom(5, 20))));
         }
     }
@@ -44,13 +44,13 @@ public:
         
         ofPushStyle();
         ofSetRectMode(OF_RECTMODE_CENTER);
-        const int size = WAVE.size() * (LEVEL * 0.1 + 0.05);
+        const int size = WAVE_SIZE * (LEVEL * 0.1 + 0.05);
         const float level = LEVEL;
         ofSetLineWidth(1);
         ofNoFill();
         ofBeginShape();
         for (unsigned int i = 0; i < size; i++) {
-            float x = ofMap(i, 0, size, 0, WIDTH);
+            float x = ofMap(i, 0, size-1, 0, WIDTH);
             float y = (HEIGHT * 0.5) - WAVE[i] * (HEIGHT * 0.5);
             ofVertex(x, y);
         }
