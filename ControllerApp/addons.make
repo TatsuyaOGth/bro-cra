@@ -1,0 +1,3 @@
+ofxXmlSettings
+ofxSharedMemory
+ofxUI

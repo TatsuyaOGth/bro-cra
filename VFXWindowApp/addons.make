@@ -1,0 +1,5 @@
+ofxOsc
+ofxXmlSettings
+ofxPostGlitch
+ofxSharedMemory
+ofxStateMachine
