@@ -20,6 +20,7 @@
 		72A929D3561B8232A182ABFC /* ofxOscBundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65EEFA3DA3526E9CDD9C21F9 /* ofxOscBundle.cpp */; };
 		879A251454401BC0B6E4F238 /* OscTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D9BFFBBF4CC43DEE890B3C3E /* OscTypes.cpp */; };
 		8F5205AEF8861EF234F0651A /* ofxOscSender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 81967292BFC87A0144BD32C6 /* ofxOscSender.cpp */; };
+		91CABE3E1A49307F00D26B5F /* ofxEasingCam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 91CABE371A49307F00D26B5F /* ofxEasingCam.cpp */; };
 		933A2227713C720CEFF80FD9 /* tinyxml.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B40EDA85BEB63E46785BC29 /* tinyxml.cpp */; };
 		9D44DC88EF9E7991B4A09951 /* tinyxmlerror.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 832BDC407620CDBA568B713D /* tinyxmlerror.cpp */; };
 		A29D8C96AE042ECEAA1BD4F3 /* NetworkingUtilsWin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2A5B1FAD3F30C8065C396ACB /* NetworkingUtilsWin.cpp */; };
@@ -105,10 +106,11 @@
 		8C75AFC8774A62495DD53464 /* ofxOscReceiver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxOscReceiver.h; path = ../../../addons/ofxOsc/src/ofxOscReceiver.h; sourceTree = SOURCE_ROOT; };
 		9153816B1A486C7E0026D846 /* SharedData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SharedData.h; path = ../../SharedData.h; sourceTree = "<group>"; };
 		91CABE1B1A492F1E00D26B5F /* BoxPerticle.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BoxPerticle.hpp; sourceTree = "<group>"; };
-		91CABE1C1A492F1E00D26B5F /* KzdPatternExample.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = KzdPatternExample.hpp; sourceTree = "<group>"; };
-		91CABE1D1A492F1E00D26B5F /* Orientation.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Orientation.hpp; sourceTree = "<group>"; };
 		91CABE1E1A492F1E00D26B5F /* RotationCube.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RotationCube.hpp; sourceTree = "<group>"; };
-		91CABE1F1A492F1E00D26B5F /* RotationSphere.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RotationSphere.hpp; sourceTree = "<group>"; };
+		91CABE371A49307F00D26B5F /* ofxEasingCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxEasingCam.cpp; sourceTree = "<group>"; };
+		91CABE381A49307F00D26B5F /* ofxEasingCam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ofxEasingCam.h; sourceTree = "<group>"; };
+		91CABE451A49390A00D26B5F /* Orientation.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Orientation.hpp; sourceTree = "<group>"; };
+		91CABE461A4941E400D26B5F /* Earth.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Earth.hpp; sourceTree = "<group>"; };
 		91DF27981A4730B6002D7766 /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		91DF279B1A473C0C002D7766 /* GeometWave.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GeometWave.hpp; sourceTree = "<group>"; };
 		91DF27B71A47495C002D7766 /* ofxState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxState.h; sourceTree = "<group>"; };
@@ -269,6 +271,24 @@
 			name = oscpack;
 			sourceTree = "<group>";
 		};
+		91CABE201A49307F00D26B5F /* ofxEasingCam */ = {
+			isa = PBXGroup;
+			children = (
+				91CABE361A49307F00D26B5F /* src */,
+			);
+			name = ofxEasingCam;
+			path = ../../../addons/ofxEasingCam;
+			sourceTree = "<group>";
+		};
+		91CABE361A49307F00D26B5F /* src */ = {
+			isa = PBXGroup;
+			children = (
+				91CABE371A49307F00D26B5F /* ofxEasingCam.cpp */,
+				91CABE381A49307F00D26B5F /* ofxEasingCam.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		91DF279F1A47495C002D7766 /* ofxStateMachine */ = {
 			isa = PBXGroup;
 			children = (
@@ -308,6 +328,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
+				91CABE201A49307F00D26B5F /* ofxEasingCam */,
 				91DF279F1A47495C002D7766 /* ofxStateMachine */,
 				E6053AB7FEC63D5F83825B88 /* ofxOsc */,
 				1F4FB5C423662B96ADFDCC0B /* ofxXmlSettings */,
@@ -419,11 +440,10 @@
 				91DF27981A4730B6002D7766 /* common.h */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				91DF279B1A473C0C002D7766 /* GeometWave.hpp */,
-				91CABE1F1A492F1E00D26B5F /* RotationSphere.hpp */,
 				91CABE1B1A492F1E00D26B5F /* BoxPerticle.hpp */,
-				91CABE1C1A492F1E00D26B5F /* KzdPatternExample.hpp */,
-				91CABE1D1A492F1E00D26B5F /* Orientation.hpp */,
+				91CABE451A49390A00D26B5F /* Orientation.hpp */,
 				91CABE1E1A492F1E00D26B5F /* RotationCube.hpp */,
+				91CABE461A4941E400D26B5F /* Earth.hpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;
@@ -558,6 +578,7 @@
 				67FE4C7B15C2F0478C8126C2 /* NetworkingUtils.cpp in Sources */,
 				510CAFE035E576A4E1502D52 /* UdpSocket.cpp in Sources */,
 				A29D8C96AE042ECEAA1BD4F3 /* NetworkingUtilsWin.cpp in Sources */,
+				91CABE3E1A49307F00D26B5F /* ofxEasingCam.cpp in Sources */,
 				28090DEB5109115003E8F1C5 /* UdpSocketWin.cpp in Sources */,
 				62545D179C94265CA1389D4A /* OscOutboundPacketStream.cpp in Sources */,
 				C4782ECC372420ACE0615B74 /* OscPrintReceivedElements.cpp in Sources */,
