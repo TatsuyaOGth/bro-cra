@@ -1,10 +1,10 @@
 #pragma once
 
-#include "BaseContentsInterface.h"
+#include "common.h"
+#include "ofxState.h"
 
-class RotationCube : public BaseContentsInterface
+class RotationCube : public BaseState
 {
-    ofLight light; // creates a light and enables lighting
     
     ofCamera mCam;
     ofVec3f mCamLook;
@@ -18,26 +18,28 @@ class RotationCube : public BaseContentsInterface
     
     ofBoxPrimitive mBox;
     
-//    ofImage mImg;
-    ofTexture & mTex;
+    ofImage mImg;
     
-    ofParameter<ofVec3f> mLigPos;
-    ofParameter<float> mRotSpeed;
-    ofParameter<float> mSize;
+    float mRotSpeed;
+    float mSize;
     
     float mVecRot;
     
 public:
-    RotationCube(ofTexture & tex):
-    mTex(tex),
+    RotationCube():
     mRotationSpeed(0.1),
     mBoxSize(100)
     {
-        base::mParamGroup.add(mLigPos.set("lig_pos", ofVec3f(0,0,0), ofVec3f(-600,-600,-600), ofVec3f(600,600,600)));
-        base::mParamGroup.add(mRotSpeed.set("rot_speed", 0.5, 0, 1));
-        base::mParamGroup.add(mSize.set("size", 1, 0, 2));
+        mRotSpeed = 0.5;
+        mSize = 0.5;
+        mImg.loadImage("tmp.jpg");
     }
+    GET_NAME
     
+    void bang()
+    {
+        
+    }
     
     void setup()
     {
@@ -49,7 +51,6 @@ public:
         mBox.setMode(OF_PRIMITIVE_TRIANGLE_STRIP);
         mBox.setResolution(8);
         
-//        light.setup();
         mVecRot = 0;
     }
     
@@ -74,14 +75,11 @@ public:
     
     void draw()
     {
+        ofBackground(ofRandom(20, 90), ofRandom(20, 90), ofRandom(20, 90));
+        ofSetColor(255,255,255);
         
         ofEnableDepthTest();
-        
-        ofEnableLighting();
         ofEnableNormalizedTexCoords();
-        light.enable();
-        light.setPosition(mLigPos);
-        
         
         //	mCam.begin();
         
@@ -99,14 +97,14 @@ public:
         
         // image
         
-        mBox.setScale((base::getLevel() * -1 + 1) + 1);
+        mBox.setScale((LEVEL * -1 + 1) + 1);
 
         // frame
         ofSetBoxResolution(8);
-        if (mTex.isAllocated()) {
-            mTex.bind();
+        if (mImg.isAllocated()) {
+            mImg.bind();
             mBox.draw();
-            mTex.unbind();
+            mImg.unbind();
         } else {
             mBox.draw();
         }
@@ -115,17 +113,10 @@ public:
         
         //	mCam.end();
         
-        ofDisableNormalizedTexCoords();
-        light.disable();
-        ofDisableLighting();
         ofDisableDepthTest();
         
     }
     
-    void getBang()
-    {
-    }
-
     
     
 };

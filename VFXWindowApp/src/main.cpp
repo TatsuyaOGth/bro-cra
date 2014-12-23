@@ -4,9 +4,13 @@
 #include "ofxStateMachine.h"
 #include "ofxOsc.h"
 #include "ofxSharedMemory.h"
+#include "ofxPostGlitch.h"
 
 #include "GeometWave.hpp"
-#include "RotationSphere.hpp"
+#include "BoxPerticle.hpp"
+#include "Orientation.hpp"
+#include "RotationCube.hpp"
+#include "Earth.hpp"
 
 class ofApp : public ofBaseApp
 {
@@ -17,14 +21,20 @@ class ofApp : public ofBaseApp
     bool bConnected;
     
     ofRectangle mCurrentWinRect;
+    vector<string> mVfxNames;
+    
+    ofFbo mFbo;
+    ofxPostGlitch mGlitch;
+
     
 public:
     ofApp(int argc, char** argv)
     {
         if (argc != 3)
         {
+            
             string arg(argv[1]);
-            mID = ofToInt(arg);
+            mID = ofToInt(arg) - 1;
             ofLogNotice() << "ID: " << arg;
             
             mSharedMem.setup(SHARED_DATA_KEY, sizeof(SharedData), false);
@@ -36,14 +46,33 @@ public:
             
             mVfx = new itg::ofxStateMachine<>();
             mVfx->addState(new GeometWave);
-            mVfx->changeState("GeometWave");
+            mVfx->addState(new BoxPerticle);
+            mVfx->addState(new Orientation);
+            mVfx->addState(new RotationCube);
+            mVfx->addState(new Earth);
+            
+            mVfxNames.push_back("GeometWave");
+            mVfxNames.push_back("BoxPerticle");
+            mVfxNames.push_back("Orientation");
+            mVfxNames.push_back("RotationCube");
+            mVfxNames.push_back("Earth");
+            
+            mVfx->changeState(mVfxNames[0]);
             
             mCurrentWinRect.set(ofGetWindowRect());
+            
         }
         else {
             ofLogError() << "missing args" << endl;
             OF_EXIT_APP(-1);
         }
+    }
+    
+    void setup()
+    {
+        ofSetFrameRate(60);
+        ofSetVerticalSync(true);
+        ofSetCircleResolution(16);
     }
     
     void update()
@@ -54,6 +83,7 @@ public:
         }
         else {
             mSharedData = mSharedMem.getData();
+            
             if (mSharedData->kill) exit();
             setLevel(mSharedData->level);
             memcpy(WAVE, mSharedData->wave, sizeof(mSharedData->wave));
@@ -63,6 +93,12 @@ public:
             {
                 sendBang();
                 common::bang_switch = mSharedData->bang_switch;
+            }
+            
+            int mode = mSharedData->mode[mID];
+            if (mode < mVfxNames.size())
+            {
+                mVfx->changeState(mVfxNames[mode]);
             }
             
             // window move
@@ -113,6 +149,8 @@ public:
     
     void updateWindowPosition()
     {
+        if (mID != 0)
+        {
         int x = mSharedData->rect[mID].x;
         int y = mSharedData->rect[mID].y;
         int w = mSharedData->rect[mID].w;
@@ -123,13 +161,16 @@ public:
             ofSetWindowShape(w, h);
             mCurrentWinRect.set(x, y, w, h);
 //        }
+        }
     }
     
     void resetWindowPosition()
     {
-        ofSetWindowPosition(80, 80);
-        ofSetWindowShape(320, 240);
-        mCurrentWinRect.set(ofGetWindowRect());
+        if (mID != 0) {
+            ofSetWindowPosition(80, 80);
+            ofSetWindowShape(320, 240);
+            mCurrentWinRect.set(ofGetWindowRect());
+        }
     }
     
     void keyPressed(int key)

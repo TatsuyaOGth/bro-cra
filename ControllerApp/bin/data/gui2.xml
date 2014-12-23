@@ -18,7 +18,7 @@
 <Widget>
     <Kind>17</Kind>
     <Name>NONE</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
 <Widget>
     <Kind>17</Kind>
@@ -38,5 +38,5 @@
 <Widget>
     <Kind>17</Kind>
     <Name>RANDOM_TWEEN</Name>
-    <Value>1</Value>
+    <Value>0</Value>
 </Widget>

@@ -68,10 +68,10 @@ public:
         mSharedData = new SharedData();
         mSharedData->level = 0;
         for (int i = 0; i < WAVE_SIZE; ++i) mSharedData->wave[i] = 0;
-        mSharedData->mode = 0;
         mSharedData->bang_switch = false;
         for (int i = 0; i < NUM_VFXWIN; ++i)
         {
+            mSharedData->mode[i] = 0;
             for (int j = 0; j < NUM_TOGGLE; ++j) mSharedData->toggles[i][j] = false;
             mCurrentWindowRect[i].x = 0;
             mCurrentWindowRect[i].y = 0;
@@ -113,8 +113,8 @@ public:
         gui1->addSlider("GAIN", 0, 50, &mGain);
         gui1->addWaveform("CH.01(L)", mWaveL, WAVE_SIZE, -1, 1);
         gui1->addWaveform("CH.02(R)", mWaveR, WAVE_SIZE, -1, 1);
-        gui1->addLabel("TOGGLES");
-        gui1->addToggleMatrix("TOGGLE_MATRIX", NUM_VFXWIN, NUM_TOGGLE);
+//        gui1->addLabel("TOGGLES");
+//        gui1->addToggleMatrix("TOGGLE_MATRIX", NUM_VFXWIN, NUM_TOGGLE);
         gui1->autoSizeToFitWidgets();
         gui1->loadSettings("gui1.xml");
         ofAddListener(gui1->newGUIEvent, this, &ofApp::guiEvent);
@@ -149,7 +149,6 @@ public:
             //----------
             mSharedData->level = mSmoothedVol;
             memcpy(mSharedData->wave, mWaveL, sizeof(mWaveL));
-            mSharedData->mode = 0;
 
             if (mSmoothedVol > mBangTh)
             {
@@ -184,6 +183,16 @@ public:
     
     void sendBang()
     {
+        for (int i = 0; i < NUM_VFXWIN; ++i)
+        {
+            for (int j = 0; j < NUM_TOGGLE; ++j)
+            {
+                bool b = ofRandomf() < 0;
+//                gui1->getWidget("TOGGLE_MATRIX");
+                mSharedData->toggles[i][j] = b;
+            }
+        }
+        
         mSharedData->bang_switch = !mSharedData->bang_switch;
     }
     
@@ -198,7 +207,7 @@ public:
         for (int i = 0; i < n; ++i)
         {
             // TODO: to ritch
-            string cmd = "open -n ../../../../../VFXWindowApp/bin/VFXWindowApp.app --args " + ofToString(i) + " &";
+            string cmd = "open -n ../../../../../VFXWindowApp/bin/VFXWindowApp.app --args " + ofToString(i + 1) + " &";
             system(cmd.c_str());
         }
     }
@@ -244,6 +253,18 @@ public:
         }
     }
     
+    void setVfxMode(int mode)
+    {
+        for (int i = 0; i < NUM_VFXWIN; ++i)
+            mSharedData->mode[i] = mode;
+    }
+    
+    void randomVfxMode()
+    {
+        for (int i = 0; i < NUM_VFXWIN; ++i)
+            mSharedData->mode[i] = (int)ofRandom(0, NUM_VFX_MODE);
+    }
+    
     void updateWindowPosition()
     {
         bool bTween = false;
@@ -256,10 +277,11 @@ public:
             {
                 case WINDOW_MOVE_NONE:
                 {
-                    tr->x = mDispray.x;
+                    int wstep = (int)(mDispray.getWidth() / ((float)NUM_VFXWIN));
+                    tr->x = mDispray.x + (i * wstep);
                     tr->y = mDispray.y;
-                    tr->w = 320;
-                    tr->h = 240;
+                    tr->w = wstep;
+                    tr->h = abs(mDispray.y - mDispray.getHeight());
                 }
                 case WINDOW_MOVE_X:
                 {
@@ -370,6 +392,14 @@ public:
             case 'b': sendBang(); break;
             case 'S': startVfxWindows(NUM_VFXWIN); break;
             case 'K': sendKill(); break;
+            case '0': randomVfxMode(); break;
+            case '1': setVfxMode(0); break;
+            case '2': setVfxMode(1); break;
+            case '3': setVfxMode(2); break;
+            case '4': setVfxMode(3); break;
+            case '5': setVfxMode(4); break;
+            case '6': setVfxMode(5); break;
+            case '7': setVfxMode(6); break;
         }
     }
     

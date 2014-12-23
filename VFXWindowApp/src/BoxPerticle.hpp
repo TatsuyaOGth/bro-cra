@@ -1,17 +1,16 @@
 #pragma once
 
-#include "BaseContentsInterface.h"
+#include "common.h"
+#include "ofxState.h"
 #include "ofxEasingCam.h"
 
-class BoxPerticle : public BaseContentsInterface
+class BoxPerticle : public BaseState
 {
     
 //    ofImage mTexImg; // texture
-    ofTexture & mTex;
     ofLight light;
 
     
-    const int maxNumBox;
     vector<ofBoxPrimitive> mBox;
     vector<ofColor> mCols;
     typedef vector<ofBoxPrimitive>::iterator box_it;
@@ -20,29 +19,29 @@ class BoxPerticle : public BaseContentsInterface
     
     int mode;
     
-    ofParameter<int> mBoxNum;
-    ofParameter<float> mRotationSpeed;
-    ofParameter<float> mBoxSize;
-    ofParameter<float> mSpacing;
-    ofParameter<float> mCloudSize;
-    ofParameter<bool> mRandomCol;
-    ofParameter<ofColor> mCol;
+    int mBoxNum;
+    float mRotationSpeed;
+    float mBoxSize;
+    float mSpacing;
+    float mCloudSize;
+    bool mRandomCol;
+    ofColor mCol;
     
     
 public:
+    GET_NAME
     
-    BoxPerticle(ofTexture & tex , int max_num_box = 400):mTex(tex), maxNumBox(max_num_box)
+    BoxPerticle()
     {
-        base::mParamGroup.add(mBoxNum.set("num_box", 10, 1, maxNumBox));
-        base::mParamGroup.add(mRotationSpeed.set("rotation_speed", 0.1, 0, 0.4));
-        base::mParamGroup.add(mBoxSize.set("box_size", 10, 0, 600));
-        base::mParamGroup.add(mSpacing.set("spaceing", 10, 1, 100));
-        base::mParamGroup.add(mCloudSize.set("cloud_size", 600, 100, 2000));
-        base::mParamGroup.add(mCol.set("color", ofColor(255,255,255,255), ofColor(0,0,0,0), ofColor(255,255,255,255)));
-        base::mParamGroup.add(mRandomCol.set("random_color", false));
+        mBoxNum = 5;
+        mRotationSpeed = 0.4;
+        mBoxSize = 300;
+        mSpacing = 10;
+        mCloudSize = 300;
+        mCol.set(180);
+        mRandomCol = false;
         
-        
-        for (int i = 0; i < maxNumBox; i++) {
+        for (int i = 0; i < mBoxNum; i++) {
             mBox.push_back(ofBoxPrimitive());
         }
     }
@@ -58,7 +57,7 @@ public:
         // setup boxs
         mCols.clear();
         for (vector<ofBoxPrimitive>::iterator box_it = mBox.begin(); box_it != mBox.end(); box_it++) {
-            box_it->setResolution(4);
+            box_it->setResolution(1);
             box_it->setMode( OF_PRIMITIVE_TRIANGLE_STRIP );
             vector<ofMeshFace> triangles = box_it->getMesh().getUniqueFaces();
             box_it->getMesh().setFromTriangles( triangles, true );
@@ -70,6 +69,8 @@ public:
     
     void update()
     {
+        mBoxSize = LEVEL * 600 + 100;
+        
         float et = ofGetElapsedTimef();
         for (int i = 0; i < mBoxNum; i++) {
             float t = (et + i * mSpacing) * mRotationSpeed;
@@ -91,42 +92,35 @@ public:
     
     void draw()
     {
+        if (TOGGLE[T0])
+        {
+            ofBackground(190);
+            mCol.set(0, 0, 0);
+        }
+        else {
+            ofBackground(0);
+            mCol.set(255, 255, 255);
+        }
+
         ofEnableLighting();
         light.setPosition(0, 0, 0);
         light.enable();
         ofEnableDepthTest();
         
-        rollCam.begin(getWidth(), getHeight());
-
-
-
-//        if (mTex.isAllocated()) {
-//            // TODO: i dont know why cant bind
-//            mTex.bind();
-//            for (int i = 0; i < mBoxNum; i++) {
-//                mBox[i].draw();
-//            }
-//            mTex.unbind();
-//        } else {
-//            for (int i = 0; i < mBoxNum; i++) {
-//                mBox[i].draw();
-//            }
-//        }
+        rollCam.begin(WIDTH, HEIGHT);
         
         for (int i = 0; i < mBoxNum; i++) {
-            if (mRandomCol) {
+            if (TOGGLE[T1]) {
                 ofSetColor(mCols[i]);
             } else {
                 ofSetColor(mCol);
             }
-            if (mode == 0) {
-                mBox[i].draw();
-            } else if (mode == 1){
+            if (TOGGLE[T2]) {
                 mBox[i].drawWireframe();
+            } else {
+                mBox[i].draw();
             }
         }
-
-
         
         rollCam.end();
         
@@ -135,7 +129,7 @@ public:
         ofDisableDepthTest();
     }
 
-    void getBang()
+    void bang()
     {
         mode = (int)ofRandom(2);
         if (mode == 0) {
@@ -144,7 +138,8 @@ public:
         if (mode == 1) {
             rollCam.setRandomScale(0.5, 3);
         }
-        if (mRandomCol) {
+        if (TOGGLE[T1])
+        {
             for (int i = 0; i < mBoxNum; i++) {
                 ofColor c;
                 c.setHsb(ofRandom(255), 210, 230);

@@ -3,13 +3,16 @@
 static const string SHARED_DATA_KEY = "brocra";
 
 // VFX Window Num
-#define NUM_VFXWIN 8
+#define NUM_VFXWIN 9
+
+// VFX mode Num
+#define NUM_VFX_MODE 6
 
 // buffer size
 #define WAVE_SIZE 256
 
 // toggle num
-#define NUM_TOGGLE 5
+#define NUM_TOGGLE 3
 
 struct Rectangle
 {
@@ -24,7 +27,7 @@ class SharedData
 public:
     float       level;                              ///< Audio level
     float       wave[WAVE_SIZE];                    ///< Wave scope
-    int         mode;                               ///< Window moving mode
+    int         mode[NUM_VFXWIN];                   ///< Vfx mode
     bool        bang_switch;                        ///< Bang switch
     bool        toggles[NUM_VFXWIN][NUM_TOGGLE];    ///< toggles * vfx window number (ID)
     Rectangle   rect[NUM_VFXWIN];                   ///< Windows position and shape

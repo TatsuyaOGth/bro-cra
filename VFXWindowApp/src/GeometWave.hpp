@@ -43,10 +43,12 @@ public:
         {
             ofBackground(190);
             mColor.set(0, 0, 0);
+            ofSetColor(0);
         }
         else {
             ofBackground(0);
             mColor.set(255, 255, 255);
+            ofSetColor(255);
         }
         ofDisableAntiAliasing();
         
