@@ -104,6 +104,11 @@
 		8B30E93FD3D3475EED522A0E /* ofxOscBundle.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxOscBundle.h; path = ../../../addons/ofxOsc/src/ofxOscBundle.h; sourceTree = SOURCE_ROOT; };
 		8C75AFC8774A62495DD53464 /* ofxOscReceiver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxOscReceiver.h; path = ../../../addons/ofxOsc/src/ofxOscReceiver.h; sourceTree = SOURCE_ROOT; };
 		9153816B1A486C7E0026D846 /* SharedData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SharedData.h; path = ../../SharedData.h; sourceTree = "<group>"; };
+		91CABE1B1A492F1E00D26B5F /* BoxPerticle.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BoxPerticle.hpp; sourceTree = "<group>"; };
+		91CABE1C1A492F1E00D26B5F /* KzdPatternExample.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = KzdPatternExample.hpp; sourceTree = "<group>"; };
+		91CABE1D1A492F1E00D26B5F /* Orientation.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Orientation.hpp; sourceTree = "<group>"; };
+		91CABE1E1A492F1E00D26B5F /* RotationCube.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RotationCube.hpp; sourceTree = "<group>"; };
+		91CABE1F1A492F1E00D26B5F /* RotationSphere.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RotationSphere.hpp; sourceTree = "<group>"; };
 		91DF27981A4730B6002D7766 /* common.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = common.h; sourceTree = "<group>"; };
 		91DF279B1A473C0C002D7766 /* GeometWave.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = GeometWave.hpp; sourceTree = "<group>"; };
 		91DF27B71A47495C002D7766 /* ofxState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ofxState.h; sourceTree = "<group>"; };
@@ -414,6 +419,11 @@
 				91DF27981A4730B6002D7766 /* common.h */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				91DF279B1A473C0C002D7766 /* GeometWave.hpp */,
+				91CABE1F1A492F1E00D26B5F /* RotationSphere.hpp */,
+				91CABE1B1A492F1E00D26B5F /* BoxPerticle.hpp */,
+				91CABE1C1A492F1E00D26B5F /* KzdPatternExample.hpp */,
+				91CABE1D1A492F1E00D26B5F /* Orientation.hpp */,
+				91CABE1E1A492F1E00D26B5F /* RotationCube.hpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;

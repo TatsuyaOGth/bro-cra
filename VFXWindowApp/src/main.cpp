@@ -6,6 +6,7 @@
 #include "ofxSharedMemory.h"
 
 #include "GeometWave.hpp"
+#include "RotationSphere.hpp"
 
 class ofApp : public ofBaseApp
 {
@@ -14,6 +15,8 @@ class ofApp : public ofBaseApp
     SharedData * mSharedData;
     ofxSharedMemory<SharedData *> mSharedMem;
     bool bConnected;
+    
+    ofRectangle mCurrentWinRect;
     
 public:
     ofApp(int argc, char** argv)
@@ -35,6 +38,7 @@ public:
             mVfx->addState(new GeometWave);
             mVfx->changeState("GeometWave");
             
+            mCurrentWinRect.set(ofGetWindowRect());
         }
         else {
             ofLogError() << "missing args" << endl;
@@ -50,8 +54,19 @@ public:
         }
         else {
             mSharedData = mSharedMem.getData();
+            if (mSharedData->kill) exit();
             setLevel(mSharedData->level);
             memcpy(WAVE, mSharedData->wave, sizeof(mSharedData->wave));
+            memcpy(TOGGLE, mSharedData->toggles[mID], sizeof(mSharedData->toggles[mID]));
+            
+            if (mSharedData->bang_switch != common::bang_switch)
+            {
+                sendBang();
+                common::bang_switch = mSharedData->bang_switch;
+            }
+            
+            // window move
+            updateWindowPosition();
         }
         
         mVfx->update();
@@ -68,6 +83,17 @@ public:
     void draw()
     {
         mVfx->draw();
+        
+//        ofSetColor(255);
+//        stringstream s;
+//        s << "DISPLAY_INFO[ " << common::dispRect.x << ":" << common::dispRect.y
+//          << " | " << common::dispRect.getWidth() << ":" << common::dispRect.getHeight() << " ]" << endl;
+//        ofDrawBitmapString(s.str(), 20, 20);
+    }
+    
+    void exit()
+    {
+        OF_EXIT_APP(0);
     }
     
     void setLevel(float level)
@@ -85,9 +111,32 @@ public:
         } else ofLogError() << "faild send bang";
     }
     
+    void updateWindowPosition()
+    {
+        int x = mSharedData->rect[mID].x;
+        int y = mSharedData->rect[mID].y;
+        int w = mSharedData->rect[mID].w;
+        int h = mSharedData->rect[mID].h;
+//        if (mCurrentWinRect != ofRectangle(x, y, w, h))
+//        {
+            ofSetWindowPosition(x, y);
+            ofSetWindowShape(w, h);
+            mCurrentWinRect.set(x, y, w, h);
+//        }
+    }
+    
+    void resetWindowPosition()
+    {
+        ofSetWindowPosition(80, 80);
+        ofSetWindowShape(320, 240);
+        mCurrentWinRect.set(ofGetWindowRect());
+    }
+    
     void keyPressed(int key)
     {
         switch (key) {
+            case 'f': ofToggleFullscreen(); break;
+            case 'r': resetWindowPosition(); break;
             case 'b': sendBang(); break;
         }
     }

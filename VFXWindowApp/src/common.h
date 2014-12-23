@@ -10,6 +10,13 @@
 #define WAVE    common::wave
 #define LEVEL   common::level
 #define TOGGLE  common::toggle
+#define T0 0
+#define T1 1
+#define T2 2
+#define T3 3
+#define T4 4
+
+
 #define BANG_KEY 'b'
 
 #define GET_NAME \
@@ -70,12 +77,14 @@ public:
         drawMode = 0;
         pos.set(WIDTH * 0.5 ,HEIGHT * 0.5);
     }
-    void update(){
+    void update()
+    {
         float max = WIDTH * 0.2;
         size.set(audioVal * max, audioVal * max);
     }
     
-    void draw(){
+    void draw()
+    {
         ofPushMatrix();
         ofPushStyle();
         ofSetRectMode(OF_RECTMODE_CENTER);
