@@ -10,7 +10,6 @@ class GeometWave : public BaseState
     int mode;
     
     ofColor mColor;
-    bool bRandomCol;
     
     vector<shared_ptr<RotationArc> > mArcs;
     
@@ -40,7 +39,16 @@ public:
     
     void draw()
     {
-        ofBackground(0);
+        if (TOGGLE[T0])
+        {
+            ofBackground(190);
+            mColor.set(0, 0, 0);
+        }
+        else {
+            ofBackground(0);
+            mColor.set(255, 255, 255);
+        }
+        ofDisableAntiAliasing();
         
         ofPushStyle();
         ofSetRectMode(OF_RECTMODE_CENTER);
@@ -76,7 +84,8 @@ public:
     
     void drawPoint(int x, int y, float size, int i)
     {
-        if (bRandomCol) {
+        if (TOGGLE[T1])
+        {
             ofColor col;
             col.setHsb(ofRandom(255), 255, 255);
             ofSetColor(col);
