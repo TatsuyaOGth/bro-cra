@@ -8,20 +8,20 @@
 <Widget>
     <Kind>4</Kind>
     <Name>LEVEL(SMOOTHED)</Name>
-    <Value>0.281416357</Value>
+    <Value>0.282611459</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>BANG_THRESHOLD</Name>
-    <Value>0.443349749</Value>
+    <Value>0.423645318</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>SMOOTH_BALANCE</Name>
-    <Value>0.930000007</Value>
+    <Value>0.955665052</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>GAIN</Name>
-    <Value>36.699504852</Value>
+    <Value>3.940886736</Value>
 </Widget>

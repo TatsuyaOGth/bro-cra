@@ -265,6 +265,16 @@ public:
             mSharedData->mode[i] = (int)ofRandom(0, NUM_VFX_MODE);
     }
     
+    void randomWindowShape()
+    {
+        for (int i = 0; i < NUM_VFXWIN; ++i)
+        {
+            mCurrentWindowRect[i].w = ofRandom(320, (mDispray.getWidth() - mCurrentWindowRect[i].x));
+            mCurrentWindowRect[i].h = ofRandom(240, (mDispray.getHeight() - mCurrentWindowRect[i].y));
+        }
+        memcpy(mSharedData->rect, mCurrentWindowRect, sizeof(mCurrentWindowRect));
+    }
+    
     void updateWindowPosition()
     {
         bool bTween = false;
@@ -390,6 +400,7 @@ public:
             case 's': saveWindowShapeInfo(); break;
             case 'l': loadWindowShapeInfo(); break;
             case 'b': sendBang(); break;
+            case 'w': randomWindowShape(); break;
             case 'S': startVfxWindows(NUM_VFXWIN); break;
             case 'K': sendKill(); break;
             case '0': randomVfxMode(); break;
@@ -400,6 +411,8 @@ public:
             case '5': setVfxMode(4); break;
             case '6': setVfxMode(5); break;
             case '7': setVfxMode(6); break;
+            case '8': setVfxMode(7); break;
+            case '9': setVfxMode(8); break;
         }
     }
     
