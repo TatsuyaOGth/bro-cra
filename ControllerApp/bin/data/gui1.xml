@@ -8,12 +8,12 @@
 <Widget>
     <Kind>4</Kind>
     <Name>LEVEL(SMOOTHED)</Name>
-    <Value>0.937053740</Value>
+    <Value>0.355731070</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
     <Name>BANG_THRESHOLD</Name>
-    <Value>0.645320177</Value>
+    <Value>0.359605908</Value>
 </Widget>
 <Widget>
     <Kind>4</Kind>
@@ -28,5 +28,5 @@
 <Widget>
     <Kind>2</Kind>
     <Name>RANDOM_CHANGE</Name>
-    <Value>0</Value>
+    <Value>1</Value>
 </Widget>
