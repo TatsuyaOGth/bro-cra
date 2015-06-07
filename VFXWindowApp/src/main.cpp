@@ -7,10 +7,15 @@
 #include "ofxPostGlitch.h"
 
 #include "GeometWave.hpp"
+#include "VerticalWave.hpp"
 #include "BoxPerticle.hpp"
 #include "Orientation.hpp"
 #include "RotationCube.hpp"
 #include "Earth.hpp"
+#include "FragmentShader.hpp"
+#include "MovieSlicer.hpp"
+
+//#define ANIME
 
 class ofApp : public ofBaseApp
 {
@@ -21,7 +26,6 @@ class ofApp : public ofBaseApp
     bool bConnected;
     
     ofRectangle mCurrentWinRect;
-    vector<string> mVfxNames;
     
     ofFbo mFbo;
     ofxPostGlitch mGlitch;
@@ -32,40 +36,55 @@ public:
     {
         if (argc != 3)
         {
-            
             string arg(argv[1]);
-            mID = ofToInt(arg) - 1;
-            ofLogNotice() << "ID: " << arg;
-            
-            mSharedMem.setup(SHARED_DATA_KEY, sizeof(SharedData), false);
-            bConnected = mSharedMem.connect();
-            mSharedData = 0;
-            
-            LEVEL = 0;
-            for (int i = 0; i < NUM_TOGGLE; ++i) TOGGLE[i] = false;
-            
-            mVfx = new itg::ofxStateMachine<>();
-            mVfx->addState(new GeometWave);
-            mVfx->addState(new BoxPerticle);
-            mVfx->addState(new Orientation);
-            mVfx->addState(new RotationCube);
-            mVfx->addState(new Earth);
-            
-            mVfxNames.push_back("GeometWave");
-            mVfxNames.push_back("BoxPerticle");
-            mVfxNames.push_back("Orientation");
-            mVfxNames.push_back("RotationCube");
-            mVfxNames.push_back("Earth");
-            
-            mVfx->changeState(mVfxNames[0]);
-            
-            mCurrentWinRect.set(ofGetWindowRect());
-            
+            mID = ofToInt(arg);
         }
         else {
-            ofLogError() << "missing args" << endl;
-            OF_EXIT_APP(-1);
+            mID = 0;
         }
+        
+        ofLogNotice() << "ID: " << mID;
+        
+        mSharedMem.setup(SHARED_DATA_KEY, sizeof(SharedData), false);
+        bConnected = mSharedMem.connect();
+        mSharedData = 0;
+        
+        LEVEL = 0;
+        for (int i = 0; i < NUM_TOGGLE; ++i) TOGGLE[i] = false;
+        
+        mVfx = new itg::ofxStateMachine<>();
+        
+#ifdef ANIME
+        // anime
+        mVfx->addState(new MovieSlicer("anime/01.mp4"));
+//        mVfx->addState(new MovieSlicer("anime/02.mp4"));
+//        mVfx->addState(new MovieSlicer("anime/03.mp4"));
+//        mVfx->addState(new MovieSlicer("anime/04.mp4"));
+//        mVfx->addState(new MovieSlicer("anime/05.mp4"));
+        
+#else
+        
+        mVfx->addState(new GeometWave());
+        mVfx->addState(new VerticalWave());
+        mVfx->addState(new BoxPerticle());
+        mVfx->addState(new Orientation());
+        //            mVfx->addState(new RotationCube());
+        mVfx->addState(new Earth());
+        mVfx->addState(new FragmentShader("shader/gunu.frag"));
+        mVfx->addState(new FragmentShader("shader/moare.frag"));
+        mVfx->addState(new FragmentShader("shader/moya.frag"));
+        mVfx->addState(new FragmentShader("shader/sins.frag"));
+        mVfx->addState(new FragmentShader("shader/tapioka.frag"));
+        mVfx->addState(new FragmentShader("shader/twist.frag"));
+        
+#endif
+        
+        if (NUM_VFX_MODE != mVfx->getSize())
+            ofLogWarning() << "dif num vfx " << mVfx->getSize() << endl;
+        
+        mVfx->changeState(0);
+        
+        mCurrentWinRect.set(ofGetWindowRect());
     }
     
     void setup()
@@ -96,13 +115,13 @@ public:
             }
             
             int mode = mSharedData->mode[mID];
-            if (mode < mVfxNames.size())
+            if (mode >= 0 && mode < mVfx->getSize())
             {
-                mVfx->changeState(mVfxNames[mode]);
+                mVfx->changeState(mode);
             }
             
             // window move
-            updateWindowPosition();
+            //updateWindowPosition();
         }
         
         mVfx->update();
@@ -119,12 +138,6 @@ public:
     void draw()
     {
         mVfx->draw();
-        
-//        ofSetColor(255);
-//        stringstream s;
-//        s << "DISPLAY_INFO[ " << common::dispRect.x << ":" << common::dispRect.y
-//          << " | " << common::dispRect.getWidth() << ":" << common::dispRect.getHeight() << " ]" << endl;
-//        ofDrawBitmapString(s.str(), 20, 20);
     }
     
     void exit()

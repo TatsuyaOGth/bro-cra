@@ -13,6 +13,7 @@ enum windowMoveMode
     WINDOW_MOVE_NONE = 0,
     WINDOW_MOVE_X,
     WINDOW_MOVE_Y,
+    WINDOW_MOVE_CROSS,
     WINDOW_MOVE_RANDOM,
     WINDOW_MOVE_RANDOM_TWEEN
 };
@@ -36,17 +37,20 @@ class ofApp : public ofBaseApp
     float mGain;
     float mBangTh;
     bool mBang;
+    bool mTglRandomVfx;
     float mWRindTh;
     string mWindowSize;
     windowMoveMode mWindowMode;
     
     Rectangle mCurrentWindowRect[NUM_VFXWIN];
     Rectangle mTargetWindowRect[NUM_VFXWIN];
-    float mWindowMoveSpeed[NUM_VFXWIN];
+    float mWindowMoveSpeedX[NUM_VFXWIN];
+    float mWindowMoveSpeedY[NUM_VFXWIN];
     float mWindowTweenAccel;
     
     ofXml mXml;
     ofRectangle mDispray;
+    int tmpBang, currentBang;
     
 public:
     ofApp()
@@ -81,7 +85,8 @@ public:
             mTargetWindowRect[i].y = 0;
             mTargetWindowRect[i].w = 320;
             mTargetWindowRect[i].h = 240;
-            mWindowMoveSpeed[i] = ofRandom(5, 20);
+            mWindowMoveSpeedX[i] = ofRandom(5, 20);
+            mWindowMoveSpeedY[i] = ofRandom(5, 20);
         }
         memcpy(mSharedData->rect, mCurrentWindowRect, sizeof(mCurrentWindowRect));
         mSharedData->kill = false;
@@ -99,6 +104,7 @@ public:
         mGain = 1.0;
         mBangTh = 0.6;
         mBang = false;
+        mTglRandomVfx = false;
         soundStream.setup(this, 0, 2, 44100, WAVE_SIZE, 4);
         
         //----------
@@ -115,6 +121,7 @@ public:
         gui1->addWaveform("CH.02(R)", mWaveR, WAVE_SIZE, -1, 1);
 //        gui1->addLabel("TOGGLES");
 //        gui1->addToggleMatrix("TOGGLE_MATRIX", NUM_VFXWIN, NUM_TOGGLE);
+        gui1->addToggle("RANDOM_CHANGE", &mTglRandomVfx);
         gui1->autoSizeToFitWidgets();
         gui1->loadSettings("gui1.xml");
         ofAddListener(gui1->newGUIEvent, this, &ofApp::guiEvent);
@@ -126,12 +133,16 @@ public:
         wmitem.push_back("NONE");
         wmitem.push_back("MOVE_X");
         wmitem.push_back("MOVE_Y");
+        wmitem.push_back("CROSS");
         wmitem.push_back("RANDOM");
         wmitem.push_back("RANDOM_TWEEN");
         gui2->addDropDownList("WINDOW_MODE", wmitem)->setAllowMultiple(false);
         gui2->autoSizeToFitWidgets();
         gui2->loadSettings("gui2.xml");
         ofAddListener(gui2->newGUIEvent, this, &ofApp::guiEvent);
+        
+        tmpBang = 0;
+        currentBang = 0;
     }
     
     void update()
@@ -160,7 +171,7 @@ public:
             }
             else mBang = false;
             
-            updateWindowPosition();
+            //updateWindowPosition();
             
             mSharedMem.setData(mSharedData);
         }
@@ -194,6 +205,12 @@ public:
         }
         
         mSharedData->bang_switch = !mSharedData->bang_switch;
+        currentBang++; // local bang switch TODO: event listener
+        
+        if (mTglRandomVfx)
+        {
+            randomVfxMode();
+        }
     }
     
     void sendKill()
@@ -278,6 +295,11 @@ public:
     void updateWindowPosition()
     {
         bool bTween = false;
+        bool bang = false;
+        if (currentBang != tmpBang) {
+            bang = true;
+            tmpBang = currentBang;
+        }
         for (int i = 0; i < NUM_VFXWIN; ++i)
         {
             Rectangle * cr = &mCurrentWindowRect[i];
@@ -289,60 +311,93 @@ public:
                 {
                     int wstep = (int)(mDispray.getWidth() / ((float)NUM_VFXWIN));
                     tr->x = mDispray.x + (i * wstep);
-                    tr->y = mDispray.y;
+                    tr->y = mDispray.y + 40;
                     tr->w = wstep;
-                    tr->h = abs(mDispray.y - mDispray.getHeight());
-                }
+                    tr->h = abs(mDispray.y - 40 - mDispray.getHeight());
+                } break;
+                    
                 case WINDOW_MOVE_X:
                 {
-                    tr->x += mWindowMoveSpeed[i];
+                    tr->x += mWindowMoveSpeedX[i];
                     if (cr->x < mDispray.x)
                     {
                         tr->x = mDispray.x;
-                        mWindowMoveSpeed[i] *= -1;
+                        mWindowMoveSpeedX[i] *= -1;
                     }
-                    if (cr->x + cr->w > mDispray.getWidth())
+                    if (cr->x + cr->w > mDispray.x + mDispray.getWidth())
                     {
-                        tr->x = mDispray.getWidth() - cr->w;
-                        mWindowMoveSpeed[i] *= -1;
+                        tr->x = mDispray.x + mDispray.getWidth() - cr->w;
+                        mWindowMoveSpeedX[i] *= -1;
                     }
-                }
-                    break;
+                } break;
+                    
                 case WINDOW_MOVE_Y:
                 {
-                    tr->y += mWindowMoveSpeed[i];
+                    tr->y += mWindowMoveSpeedY[i];
                     if (cr->y < mDispray.y)
                     {
                         tr->y = mDispray.y;
-                        mWindowMoveSpeed[i] *= -1;
+                        mWindowMoveSpeedY[i] *= -1;
                     }
-                    if (cr->y + cr->h > mDispray.getHeight())
+                    if (cr->y + cr->h >  mDispray.y + mDispray.getHeight())
                     {
-                        tr->y = mDispray.getHeight() - cr->h;
-                        mWindowMoveSpeed[i] *= -1;
+                        tr->y =  mDispray.y + mDispray.getHeight() - cr->h;
+                        mWindowMoveSpeedY[i] *= -1;
                     }
-                }
-                    break;
+                } break;
+                    
+                case WINDOW_MOVE_CROSS:
+                {
+                    tr->x += mWindowMoveSpeedX[i];
+                    tr->y += mWindowMoveSpeedY[i];
+                    if (cr->x < mDispray.x)
+                    {
+                        tr->x = mDispray.x;
+                        mWindowMoveSpeedX[i] *= -1;
+                    }
+                    if (cr->x + cr->w > mDispray.x + mDispray.getWidth())
+                    {
+                        tr->x = mDispray.x + mDispray.getWidth() - cr->w;
+                        mWindowMoveSpeedX[i] *= -1;
+                    }
+                    if (cr->y < mDispray.y)
+                    {
+                        tr->y = mDispray.y;
+                        mWindowMoveSpeedY[i] *= -1;
+                    }
+                    if (cr->y + cr->h >  mDispray.y + mDispray.getHeight())
+                    {
+                        tr->y =  mDispray.y + mDispray.getHeight() - cr->h;
+                        mWindowMoveSpeedY[i] *= -1;
+                    }
+                } break;
+                    
                 case WINDOW_MOVE_RANDOM:
                 {
-                    float random = ofRandomuf();
-                    if (random < mWRindTh)
+                    if (bang)
                     {
-                        tr->x = ofRandom(mDispray.x, (mDispray.getWidth() - cr->w) * 0.5);
-                        tr->y = ofRandom(mDispray.y, (mDispray.getHeight() - cr->h) * 0.5);
-                        tr->w = ofRandom(320, (mDispray.getWidth() - tr->x));
-                        tr->h = ofRandom(240, (mDispray.getHeight() - tr->y));
+                        float random = ofRandomuf();
+                        if (random < mWRindTh)
+                        {
+                            tr->x = ofRandom(mDispray.x, (mDispray.getWidth() - cr->w) * 0.5);
+                            tr->y = ofRandom(mDispray.y, (mDispray.getHeight() - cr->h) * 0.5);
+                            tr->w = ofRandom(320, (mDispray.getWidth() - tr->x));
+                            tr->h = ofRandom(240, (mDispray.getHeight() - tr->y));
+                        }
                     }
                 }
                     break;
                 case WINDOW_MOVE_RANDOM_TWEEN:
                 {
-                    bTween = true;
-                    float random = ofRandomuf();
-                    if (random < mWRindTh)
+                    if (bang)
                     {
-                        tr->x = ofRandom(mDispray.x, mDispray.getWidth() - cr->w);
-                        tr->y = ofRandom(mDispray.y, mDispray.getHeight() - cr->h);
+                        bTween = true;
+                        float random = ofRandomuf();
+                        if (random < mWRindTh)
+                        {
+                            tr->x = ofRandom(mDispray.x, mDispray.getWidth() - cr->w);
+                            tr->y = ofRandom(mDispray.y, mDispray.getHeight() - cr->h);
+                        }
                     }
                 }
                     
@@ -387,7 +442,14 @@ public:
             
             for (int i = 0; i < NUM_VFXWIN; ++i)
             {
-                mWindowMoveSpeed[i] = ofRandom(5, 15);
+                mWindowMoveSpeedX[i] = ofRandom(5, 15);
+                mWindowMoveSpeedY[i] = ofRandom(5, 15);
+            }
+            if (mWindowMode == WINDOW_MOVE_CROSS ||
+                mWindowMode == WINDOW_MOVE_RANDOM ||
+                mWindowMode == WINDOW_MOVE_RANDOM_TWEEN)
+            {
+                randomWindowShape();
             }
         }
     }
@@ -442,6 +504,6 @@ public:
 //========================================================================
 int main( )
 {
-	ofSetupOpenGL(1024,768,OF_WINDOW);
+	ofSetupOpenGL(480,600,OF_WINDOW);
 	ofRunApp(new ofApp());
 }

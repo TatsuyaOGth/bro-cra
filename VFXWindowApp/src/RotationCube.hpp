@@ -75,7 +75,7 @@ public:
     
     void draw()
     {
-        ofBackground(ofRandom(20, 90), ofRandom(20, 90), ofRandom(20, 90));
+        ofBackground(ofRandom(20, 190), ofRandom(20, 190), ofRandom(20, 190));
         ofSetColor(255,255,255);
         
         ofEnableDepthTest();

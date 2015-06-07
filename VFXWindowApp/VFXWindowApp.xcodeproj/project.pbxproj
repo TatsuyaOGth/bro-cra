@@ -104,7 +104,11 @@
 		832BDC407620CDBA568B713D /* tinyxmlerror.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.cpp; fileEncoding = 30; name = tinyxmlerror.cpp; path = ../../../addons/ofxXmlSettings/libs/tinyxmlerror.cpp; sourceTree = SOURCE_ROOT; };
 		8B30E93FD3D3475EED522A0E /* ofxOscBundle.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxOscBundle.h; path = ../../../addons/ofxOsc/src/ofxOscBundle.h; sourceTree = SOURCE_ROOT; };
 		8C75AFC8774A62495DD53464 /* ofxOscReceiver.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.c.h; fileEncoding = 30; name = ofxOscReceiver.h; path = ../../../addons/ofxOsc/src/ofxOscReceiver.h; sourceTree = SOURCE_ROOT; };
+		9107CE981AA23A3C002A6965 /* FragmentShader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = FragmentShader.hpp; sourceTree = "<group>"; };
+		9107CE9B1AA29901002A6965 /* VerticalWave.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = VerticalWave.hpp; sourceTree = "<group>"; };
+		9107CE9E1AA2ADA4002A6965 /* shader */ = {isa = PBXFileReference; lastKnownFileType = folder; name = shader; path = bin/data/shader; sourceTree = "<group>"; };
 		9153816B1A486C7E0026D846 /* SharedData.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SharedData.h; path = ../../SharedData.h; sourceTree = "<group>"; };
+		9197207F1AA3070D0052279F /* MovieSlicer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = MovieSlicer.hpp; sourceTree = "<group>"; };
 		91CABE1B1A492F1E00D26B5F /* BoxPerticle.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = BoxPerticle.hpp; sourceTree = "<group>"; };
 		91CABE1E1A492F1E00D26B5F /* RotationCube.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = RotationCube.hpp; sourceTree = "<group>"; };
 		91CABE371A49307F00D26B5F /* ofxEasingCam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ofxEasingCam.cpp; sourceTree = "<group>"; };
@@ -425,6 +429,7 @@
 			children = (
 				E4B6FCAD0C3E899E008CF71C /* openFrameworks-Info.plist */,
 				E4EB6923138AFD0F00A09F29 /* Project.xcconfig */,
+				9107CE9E1AA2ADA4002A6965 /* shader */,
 				E4B69E1C0A3A1BDC003C02F2 /* src */,
 				E4EEC9E9138DF44700A80321 /* openFrameworks */,
 				BB4B014C10F69532006C3DED /* addons */,
@@ -440,10 +445,13 @@
 				91DF27981A4730B6002D7766 /* common.h */,
 				E4B69E1D0A3A1BDC003C02F2 /* main.cpp */,
 				91DF279B1A473C0C002D7766 /* GeometWave.hpp */,
+				9107CE9B1AA29901002A6965 /* VerticalWave.hpp */,
 				91CABE1B1A492F1E00D26B5F /* BoxPerticle.hpp */,
 				91CABE451A49390A00D26B5F /* Orientation.hpp */,
 				91CABE1E1A492F1E00D26B5F /* RotationCube.hpp */,
 				91CABE461A4941E400D26B5F /* Earth.hpp */,
+				9107CE981AA23A3C002A6965 /* FragmentShader.hpp */,
+				9197207F1AA3070D0052279F /* MovieSlicer.hpp */,
 			);
 			path = src;
 			sourceTree = SOURCE_ROOT;

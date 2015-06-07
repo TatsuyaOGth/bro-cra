@@ -3,6 +3,7 @@
 #include "common.h"
 #include "ofxState.h"
 #include "ofxEasingCam.h"
+#include "ofxPostGlitch.h"
 
 class BoxPerticle : public BaseState
 {
@@ -27,23 +28,28 @@ class BoxPerticle : public BaseState
     bool mRandomCol;
     ofColor mCol;
     
+    ofFbo fbo;
+    ofxPostGlitch glitch;
     
 public:
     GET_NAME
     
     BoxPerticle()
     {
-        mBoxNum = 5;
-        mRotationSpeed = 0.4;
-        mBoxSize = 300;
-        mSpacing = 10;
-        mCloudSize = 300;
+        mBoxNum = 15;
+        mRotationSpeed = 0.6;
+        mBoxSize = 200;
+        mSpacing = 5;
+        mCloudSize = 100;
         mCol.set(180);
         mRandomCol = false;
         
         for (int i = 0; i < mBoxNum; i++) {
             mBox.push_back(ofBoxPrimitive());
         }
+        
+        fbo.allocate(640, 480, GL_RGB);
+        assert(glitch.setup(&fbo, "glitch"));
     }
     
     void setup()
@@ -92,9 +98,13 @@ public:
     
     void draw()
     {
+        fbo.begin();
+        const float w = fbo.getWidth();
+        const float h = fbo.getHeight();
+        
         if (TOGGLE[T0])
         {
-            ofBackground(190);
+            ofBackground(255);
             mCol.set(0, 0, 0);
         }
         else {
@@ -107,7 +117,7 @@ public:
         light.enable();
         ofEnableDepthTest();
         
-        rollCam.begin(WIDTH, HEIGHT);
+        rollCam.begin(w, h);
         
         for (int i = 0; i < mBoxNum; i++) {
             if (TOGGLE[T1]) {
@@ -115,11 +125,7 @@ public:
             } else {
                 ofSetColor(mCol);
             }
-            if (TOGGLE[T2]) {
-                mBox[i].drawWireframe();
-            } else {
-                mBox[i].draw();
-            }
+            mBox[i].draw();
         }
         
         rollCam.end();
@@ -127,6 +133,12 @@ public:
         light.disable();
         ofDisableLighting();
         ofDisableDepthTest();
+        
+        fbo.end();
+        
+        glitch.generateFx();
+        ofSetColor(255, 255, 255);
+        fbo.getTextureReference().draw(0, 0, WIDTH, HEIGHT);
     }
 
     void bang()
@@ -136,7 +148,7 @@ public:
             rollCam.setRandomPos();
         }
         if (mode == 1) {
-            rollCam.setRandomScale(0.5, 3);
+            rollCam.setRandomScale(0.3, 2);
         }
         if (TOGGLE[T1])
         {
@@ -144,6 +156,16 @@ public:
                 ofColor c;
                 c.setHsb(ofRandom(255), 210, 230);
                 mCols[i].set(c);
+            }
+        }
+        
+        if (TOGGLE[T2])
+        {
+            switch((int)ofRandom(0, 3))
+            {
+                case 0: glitch.setFxTo(OFXPOSTGLITCH_CONVERGENCE, ofRandom(0.5, 1)); break;
+                case 1: glitch.setFxTo(OFXPOSTGLITCH_CUTSLIDER, ofRandom(0.5, 1)); break;
+                case 2: glitch.setFxTo(OFXPOSTGLITCH_TWIST, ofRandom(0.5, 1)); break;
             }
         }
     }

@@ -5,12 +5,8 @@
 
 class GeometWave : public BaseState
 {
-    list<shared_ptr<BaseAnimationUnit> > mPerticle;
-    
     int mode;
-    
     ofColor mColor;
-    
     vector<shared_ptr<RotationArc> > mArcs;
     
 public:
@@ -27,11 +23,6 @@ public:
     
     void update()
     {
-        for (anm_it it = mPerticle.begin(); it != mPerticle.end(); it++) {
-            (*it)->update();
-            if ((*it)->isDied()) mPerticle.erase(it);
-        }
-        
         for (vector<shared_ptr<RotationArc> >::iterator it = mArcs.begin(); it != mArcs.end(); it++) {
             (*it)->update();
         }
@@ -39,24 +30,21 @@ public:
     
     void draw()
     {
+        ofBackground(0);
+        mColor.set(255, 255, 255);
+        ofSetColor(255);
+        ofDisableAntiAliasing();
+        
         if (TOGGLE[T0])
         {
-            ofBackground(190);
-            mColor.set(0, 0, 0);
-            ofSetColor(0);
+            //TODO: 
         }
-        else {
-            ofBackground(0);
-            mColor.set(255, 255, 255);
-            ofSetColor(255);
-        }
-        ofDisableAntiAliasing();
         
         ofPushStyle();
         ofSetRectMode(OF_RECTMODE_CENTER);
-        const int size = WAVE_SIZE * (LEVEL * 0.1 + 0.05);
-        const float level = LEVEL;
         ofSetLineWidth(1);
+        const int size = WAVE_SIZE * (LEVEL * 0.5 + 0.05);
+        const float level = LEVEL;
         ofNoFill();
         ofBeginShape();
         for (unsigned int i = 0; i < size; i++) {

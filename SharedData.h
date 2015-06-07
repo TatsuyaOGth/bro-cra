@@ -6,7 +6,8 @@ static const string SHARED_DATA_KEY = "brocra";
 #define NUM_VFXWIN 9
 
 // VFX mode Num
-#define NUM_VFX_MODE 6
+#define NUM_VFX_MODE 11
+
 
 // buffer size
 #define WAVE_SIZE 256
